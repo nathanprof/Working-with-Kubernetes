@@ -4,14 +4,25 @@ How to use Kubernetes in a lab environment using a minikube cluster on a VMware 
 - sudo apt update && sudo apt upgrade -y (This ensures the ubuntu linux machine is up-to-date, where what the update cmd does is updates the package list while the upgrade cmd installs the the package lists in the system.)
 ## install virtualbox extension
 - sudo apt install virtualbox virtualbox-dkms virtualbox-qt virtualbox-ext-pack
-## Install Docker
-- Add Docker's official GPG key: sudo apt-get update sudo apt-get install ca-certificates curl gnupg sudo install -m 0755 -d /etc/apt/keyrings curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg sudo chmod a+r /etc/apt/keyrings/docker.gpg # Add the repository to Apt sources: echo \ "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \ "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \ sudo tee /etc/apt/sources.list.d/docker.list > /dev/null sudo apt-get update
-- sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-- docker --version (used to verify the version of docker you installed)
-- systemctl enable docker (this cmd allows docker service to start on boot)
-- systemctl start docker (used to start the service)
-- systemctl status docker (check the service status)
-- sudo usermod -aG docker $USER && newgrp docker (cmd is nedded to avoid running sudo docker everytime you want to use the docker cmd)
+## Install Docker 
+- Before running thois cmd make sure to be root e.g sudo su
+# Add Docker's official GPG key:
+sudo apt update
+sudo apt install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+Components: stable
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+sudo apt update
 ## Install Minikube
 - wget https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 chmod +x minikube-linux-amd64 sudo mv minikube-linux-amd64 /usr/local/bin/minikube
 - minikube version
